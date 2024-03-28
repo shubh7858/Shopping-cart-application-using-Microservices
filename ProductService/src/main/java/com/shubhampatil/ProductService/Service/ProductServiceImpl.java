@@ -43,10 +43,6 @@ public class ProductServiceImpl implements ProductService {
         copyProperties(product,productResponse);
 
         return productResponse;
-
-
-
-
     }
 
     @Override

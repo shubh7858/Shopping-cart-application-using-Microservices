@@ -3,23 +3,37 @@ package com.shubhampatil.orderservice.Service;
 import com.shubhampatil.orderservice.Entity.Order;
 import com.shubhampatil.orderservice.Model.OrderRequest;
 import com.shubhampatil.orderservice.Repository.OrderRepository;
+import com.shubhampatil.orderservice.external.client.ProductService;
+import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import javax.inject.Qualifier;
 import java.time.Instant;
 
-@Service
+
 @Log4j2
+@Service
 public class OrderServiceImpl implements OrderService{
     @Autowired
     private OrderRepository orderRepository;
+
+
+    @Autowired
+    private ProductService productService;
     @Override
     public long placeOrder(OrderRequest orderRequest) {
         log.info("Placing Order request {}",orderRequest);
 
-         Order order = Order.builder().productId(orderRequest.getProductId())
+        productService.reduceQuantity(orderRequest.getProductId(),orderRequest.getQuantity());
+
+        log.info("Creating Order Now By Reducing Stock first");
+
+        Order order = Order.builder().productId(orderRequest.getProductId())
                           .quantity(orderRequest.getQuantity()).orderDate(Instant.now()).orderStatus("CREATED")
                           .amount(orderRequest.getTotalAmount()).build();
         log.info("Creating the order now....wait");
