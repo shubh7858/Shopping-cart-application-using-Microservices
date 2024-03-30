@@ -8,8 +8,9 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="ConfigServer" />
+        <module name="Orderservice" />
         <module name="ProductService" />
-        <module name="orderservice" />
+        <module name="PaymentService" />
         <module name="service-registery" />
       </profile>
     </annotationProcessing>
@@ -17,8 +18,9 @@
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="ConfigServer" options="-parameters" />
+      <module name="Orderservice" options="-parameters" />
+      <module name="PaymentService" options="-parameters" />
       <module name="ProductService" options="-parameters" />
-      <module name="orderservice" options="-parameters" />
       <module name="service-registery" options="-parameters" />
     </option>
   </component>
