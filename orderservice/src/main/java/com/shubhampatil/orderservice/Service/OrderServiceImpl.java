@@ -9,6 +9,7 @@ import com.shubhampatil.orderservice.exception.CustomException;
 import com.shubhampatil.orderservice.external.Request.PaymentRequest;
 import com.shubhampatil.orderservice.external.client.PaymentService;
 import com.shubhampatil.orderservice.external.client.ProductService;
+import com.shubhampatil.orderservice.external.response.PaymentResponse;
 import lombok.Value;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +54,6 @@ public class OrderServiceImpl implements OrderService{
 
         log.info("Order Placed Successfully With Order ID {}",order.getId());
 
-        log.info("CALLING THE PAYMENT SERVICE FOR THE PAYMENT");
-
         PaymentRequest paymentRequest =  PaymentRequest.builder()
                 .orderId(order.getId()).paymentMode(orderRequest.getPaymentmode()).amount(order.getAmount()).build();
 
@@ -85,19 +84,27 @@ public class OrderServiceImpl implements OrderService{
 
         ProductResponse productResponse = restTemplate.getForObject("http://PRODUCT-SERVICE/product/"+order.getProductId(),ProductResponse.class);
 
+        log.info("Getting Payment Information From Payment Service.");
+
+
+
         OrderResponse.ProductDetails productDetails = OrderResponse.ProductDetails.builder()
                 .productName(productResponse.getProductName()).price(productResponse.getPrice())
                 .productId(productResponse.getProductId()).quantity(productResponse.getQuantity()).build();
-
-
-
-
+         log.info("just checking 1");
+        PaymentResponse paymentResponse = restTemplate.getForObject("http://PAYMENT-SERVICE/payment/"+order.getId(),PaymentResponse.class);
+        log.info("just checking 2");
+              OrderResponse.PaymentDetails paymentDetails = OrderResponse.PaymentDetails.builder().orderId(order.getId())
+                         .paymentAmount(paymentResponse.getOrderAmount()).paymentDate(paymentResponse.getOrderDate())
+                         .paymentStatus(paymentResponse.getOrderStatus()).paymentMode(paymentResponse.getPaymentMode()).build();
+        log.info("just checking 3");
 
         OrderResponse orderResponse = OrderResponse.builder()
                 .orderId(order.getId()).date(order.getOrderDate())
                 .orderStatus(order.getOrderStatus()).orderAmount(order.getAmount())
-                .quantity(order.getQuantity()).productDetails(productDetails).build();
+                .quantity(order.getQuantity()).productDetails(productDetails).paymentDetails(paymentDetails).build();
 
+        log.info("just checking 4");
         return orderResponse;
 
 

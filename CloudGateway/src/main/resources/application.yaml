@@ -1,0 +1,75 @@
+server:
+   port: 9090
+
+spring:
+  config:
+    import: configserver:http://localhost:9296
+  application:
+    name: API-GATEWAY
+
+  cloud:
+#    loadbalancer:
+#      ribbon:
+#        enabled: false
+    gateway:
+      routes:
+        - id : ORDER-SERVICE
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ORDER-SERVICE
+                fallbackuri: forward:/orderServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+        - id: PRODUCT-SERVICE
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+           - Path=/product/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PRODUCT-SERVICE
+                fallbackuri: forward:/productServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+        - id: PAYMENT-SERVICE
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+           - Path=/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: PAYMENT-SERVICE
+                fallbackuri: forward:/paymentServiceFallback
+            - name: RequestRateLimiter
+              args:
+                redis-rate-limiter.replenishRate: 1
+                redis-rate-limiter.burstCapacity: 1
+
+okta:
+  oauth2:
+    issuer: https://dev-92226740.okta.com/oauth2/default
+    audience: api://default
+    client-id: 0oag6hfhie5QwApeu5d7
+    client-secret: b-WVYR65x8BD1vdHYTOFgQgQbzQG92O_8vNV4r0hgqf53LusV45Ia8YXDFB1DNDH
+    scopes:
+      - openid, profile, email, offline_access
+
+
+
+
+#  com:
+#    github:
+#      ben-manes:
+#        caffeine:caffeine:${caffeine.version}:
+#      discovery:
+#        locator:
+#          enable: true
+#          lower-case-service-id: true

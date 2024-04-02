@@ -7,7 +7,8 @@ spring:
     username: root
     password: manager
     driverClassName: com.mysql.cj.jdbc.Driver
-
+  config:
+    import: configserver:http://localhost:9296
   jpa:
     database-platform: org.hibernate.dialect.MySQL57InnoDBDialect
     hibernate:
@@ -16,5 +17,3 @@ spring:
       show-sql: true
   application:
     name: PAYMENT-SERVICE
-  config:
-    import: configserver:http://localhost:9296
