@@ -37,7 +37,7 @@ spring:
           clientSecret: b-WVYR65x8BD1vdHYTOFgQgQbzQG92O_8vNV4r0hgqf53LusV45Ia8YXDFB1DNDH
         provider:
           okta:
-            issuerUri: https://dev-92226740.okta.com/oauth2/default
+            issuer-uri: https://dev-92226740.okta.com/oauth2/default
 
 
 
