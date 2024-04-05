@@ -13,8 +13,8 @@ public class WebSecurityConfig {
 
     @Bean
      SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http .authorizeRequests(authorizrRequest->
-                               authorizrRequest.antMatchers("/payment/**")
+        http .authorizeRequests(authorizeRequests->
+                               authorizeRequests.antMatchers("/payment/**")
                                        .hasAuthority("SCOPE_internal")
                                        .anyRequest().authenticated())
                 .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);

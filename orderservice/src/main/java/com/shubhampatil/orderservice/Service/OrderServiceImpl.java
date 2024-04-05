@@ -78,6 +78,7 @@ public class OrderServiceImpl implements OrderService{
 
     @Override
     public OrderResponse getOrderDetails(long orderId) {
+        log.info("Get the order details for the Id : {}",orderId);
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(()-> new CustomException("Order not found with Id:"+ orderId,"Order_Not_Found",404));
          log.info("Calling The Product Srvice To get THe Product Details With ID {}",order.getProductId());

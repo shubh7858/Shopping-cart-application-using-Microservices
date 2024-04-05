@@ -1,0 +1,97 @@
+server:
+  port: 8083
+
+spring:
+  config:
+    import: optional:configserver:http://localhost:9296
+  datasource:
+    url: jdbc:h2:mem:order
+    username: sa
+    password: password
+    driverClassName: org.h2.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+#    hibernate:
+#      globally_quoted_identifiers: true
+      #        That way, we tell H2 to exclude the user keyword from the list of reserved words.
+      #        n case we’re using hibernate, we can set the hibernate.globally_quoted_identifiers property to true.
+      #        As the property name implies, hibernate will automatically quote all database identifiers.
+      #        With that being said, we don’t need to manually escape table or column names when using @Table or @Column annotations.
+#      ddl-auto: update
+#      show-sql: true
+#  application:
+#    name: ORDER-SERVICE
+
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://dev-92226740.okta.com/oauth2/default
+      client:
+        registration:
+          internal-client:
+            provider: okta
+            authorization-grant-type: client_credentials
+            scope: internal
+            client-id: 0oag6hfhie5QwApeu5d7
+            clientSecret: b-WVYR65x8BD1vdHYTOFgQgQbzQG92O_8vNV4r0hgqf53LusV45Ia8YXDFB1DNDH
+        provider:
+          okta:
+            issuer-uri: https://dev-92226740.okta.com/oauth2/default
+
+eureka:
+  client:
+    enabled: false
+
+
+
+
+
+
+
+#management:
+#  tracing:
+#    sampling:
+#      probability: 1.0
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultzone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+
+
+#spring:
+#        jpa:
+#          properties:
+
+
+
+
+#management:
+#  tracing:
+#    sampling:
+#      probability: 1.0
+
+#eureka:
+#  instance:
+#    prefer-ip-address: true
+#  client:
+#    fetch-registry: true
+#    register-with-eureka: true
+#    service-url:
+#      defaultzone: ${EUREKA_SERVER_ADDRESS:http://localhost:8761/eureka}
+
+
+#spring:
+#        jpa:
+#          properties:
+#            hibernate:
+#              globally_quoted_identifiers=true:
+#            hibernate:
+#              globally_quoted_identifiers=true:

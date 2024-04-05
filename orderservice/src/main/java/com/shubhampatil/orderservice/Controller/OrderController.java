@@ -27,7 +27,7 @@ public class OrderController {
     }
 
 
-    @PreAuthorize("hasAuthority('Admin') || hasAuthority('Customer')")
+    @PreAuthorize("hasAuthority('Customer') || hasAuthority('Admin')")
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderResponse> getOrderDetails(@PathVariable long orderId ){
         OrderResponse orderResponse = orderService.getOrderDetails(orderId);

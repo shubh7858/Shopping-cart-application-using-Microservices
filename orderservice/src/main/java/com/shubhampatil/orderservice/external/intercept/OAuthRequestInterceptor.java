@@ -17,7 +17,7 @@ public class OAuthRequestInterceptor implements RequestInterceptor {
 
         template.header("Authorization","Bearer "
         +oAuth2AuthorizedClientManager.authorize(OAuth2AuthorizeRequest
-                        .withClientRegistrationId("internal_client")
+                        .withClientRegistrationId("internal-client")
                 .principal("internal").build()).getAccessToken().getTokenValue());
 
 
