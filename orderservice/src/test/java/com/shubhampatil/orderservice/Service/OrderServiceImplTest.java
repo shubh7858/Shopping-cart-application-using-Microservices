@@ -4,6 +4,7 @@ import com.shubhampatil.ProductService.Model.ProductResponse;
 import com.shubhampatil.orderservice.Entity.Order;
 import com.shubhampatil.orderservice.Model.OrderResponse;
 import com.shubhampatil.orderservice.Repository.OrderRepository;
+import com.shubhampatil.orderservice.exception.CustomException;
 import com.shubhampatil.orderservice.external.client.PaymentService;
 import com.shubhampatil.orderservice.external.client.ProductService;
 import com.shubhampatil.orderservice.external.response.PaymentResponse;
@@ -45,7 +46,7 @@ public class OrderServiceImplTest {
 
     @Test
     @DisplayName("Get order - success scenario")
-    void test_when_order_success(){
+    void test_when_get_order_success(){
         //Mocking
         Order order = getMockOrder();
         when(orderRepository.findById(anyLong() )).thenReturn(Optional.of(getMockOrder()));
@@ -93,5 +94,27 @@ public class OrderServiceImplTest {
                 .build();
     }
 
+    @DisplayName("Get Orders - Failure Scenario")
+    @Test
+    void test_when_get_order_NOT_FOUND_then_NOT_FOUND(){
+
+        when(orderRepository.findById(anyLong())).thenReturn(Optional.ofNullable(null));
+
+        CustomException exception = assertThrows(CustomException.class,()->orderService.getOrderDetails(11));
+
+        assertEquals("Order_Not_Found",exception.getErrorCode());
+        assertEquals(404,exception.getStatus());
+
+        verify(orderRepository,times(1)).findById(anyLong());
+
+    }
+
+    @DisplayName("Place Order - Success Scenario")
+    @Test
+    void test_when_place_order_success(){
+
+
+
+    }
 
 }
