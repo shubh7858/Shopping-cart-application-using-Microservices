@@ -2,30 +2,31 @@ package com.shubhampatil.orderservice.Service;
 
 import com.shubhampatil.ProductService.Model.ProductResponse;
 import com.shubhampatil.orderservice.Entity.Order;
+import com.shubhampatil.orderservice.Model.OrderRequest;
 import com.shubhampatil.orderservice.Model.OrderResponse;
+import com.shubhampatil.orderservice.Model.PaymentMode;
 import com.shubhampatil.orderservice.Repository.OrderRepository;
 import com.shubhampatil.orderservice.exception.CustomException;
+import com.shubhampatil.orderservice.external.Request.PaymentRequest;
 import com.shubhampatil.orderservice.external.client.PaymentService;
 import com.shubhampatil.orderservice.external.client.ProductService;
 import com.shubhampatil.orderservice.external.response.PaymentResponse;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
-
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.util.Optional;
 
-import static java.lang.Long.*;
+import static java.lang.Long.valueOf;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
@@ -113,8 +114,48 @@ public class OrderServiceImplTest {
     @Test
     void test_when_place_order_success(){
 
+        Order order = getMockOrder();
+        OrderRequest orderRequest = getMockOrderRequest();
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+        when(productService.reduceQuantity(anyLong(),anyLong())).thenReturn(new ResponseEntity<String>("SUCCESS", HttpStatus.OK));
 
+        when(paymentService.doPayment(any(PaymentRequest.class))).thenReturn(new ResponseEntity<String>("Payment Done",HttpStatus.OK));
 
+         long orderId = orderService.placeOrder(orderRequest);
+
+       verify(orderRepository,times(2)).save(any());
+       verify(productService,times(1)).reduceQuantity(anyLong(),anyLong());
+       verify(paymentService,times(1)).doPayment(any(PaymentRequest.class));
+
+       assertEquals(order.getId(),orderId);
+
+    }
+
+    @DisplayName("place order - payment failed scenario")
+    @Test
+    void test_when_place_order_payment_fails_then_order_placed(){
+
+        Order order = getMockOrder();
+        OrderRequest orderRequest = getMockOrderRequest();
+        when(orderRepository.save(any(Order.class))).thenReturn(order);
+        when(productService.reduceQuantity(anyLong(),anyLong())).thenReturn(new ResponseEntity<String>("SUCCESS", HttpStatus.OK));
+
+        when(paymentService.doPayment(any(PaymentRequest.class))).thenThrow(new RuntimeException());
+        long orderId = orderService.placeOrder(orderRequest);
+        verify(orderRepository,times(2)).save(any());
+        verify(productService,times(1)).reduceQuantity(anyLong(),anyLong());
+        verify(paymentService,times(1)).doPayment(any(PaymentRequest.class));
+
+        assertEquals(order.getId(),orderId);
+
+    }
+
+    private OrderRequest getMockOrderRequest() {
+
+    return OrderRequest.builder()
+            .productId(12L).quantity(7L)
+            .paymentmode(PaymentMode.OnlinePayment).totalAmount(1299L)
+            .build();
     }
 
 }
